@@ -144,7 +144,7 @@ public class VideoDataService {
 			videoDetails.setOverview(e.getOverview());
 			videoDetails.setPopularity(e.getPopularity());
 			videoDetails.setLanguage(e.getLanguage());
-			videoDetails.setImgPath(e.getImgPath());
+			videoDetails.setImgpath(e.getImgpath());
 			i++;
 			movieList.add(videoDetails);
 		}

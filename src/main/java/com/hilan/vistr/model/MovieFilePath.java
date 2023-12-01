@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class MovieFilePath {
 
-	private String imgUrl;
-	private String videoPath;
+	private String imgpath;
+	private String videopath;
 
 
 }

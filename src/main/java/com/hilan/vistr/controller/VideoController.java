@@ -54,8 +54,8 @@ public class VideoController {
 	// , produces = { MediaType.IMAGE_JPEG, MediaType.IMAGE_PNG}
 	@PostMapping(path = "/movie/img", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
 	public @ResponseBody byte[] getMoviePoster(@RequestBody MovieFilePath filePath) throws IOException {
-		log.info("New Request to get movie poster from Path: " + filePath.getImgUrl());
-		return videoDataService.getMoviePoster(filePath.getImgUrl());
+		log.info("New Request to get movie poster from Path: " + filePath.getImgpath());
+		return videoDataService.getMoviePoster(filePath.getImgpath());
 
 	}
 

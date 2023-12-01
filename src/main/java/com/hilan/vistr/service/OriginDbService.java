@@ -49,8 +49,8 @@ public class OriginDbService {
 					data.setOverview(row.getCell(1).getStringCellValue());
 					data.setPopularity(row.getCell(2).getStringCellValue());
 					data.setLanguage(row.getCell(3).getStringCellValue());
-					data.setImgPath(row.getCell(4).getStringCellValue());
-					data.setVideoPath(row.getCell(5).getStringCellValue());
+					data.setImgpath(row.getCell(4).getStringCellValue());
+					data.setVideopath(row.getCell(5).getStringCellValue());
 					dataList.add(data);
 				}
 				i++;
