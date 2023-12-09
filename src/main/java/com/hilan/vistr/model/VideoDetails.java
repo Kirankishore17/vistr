@@ -10,6 +10,7 @@ public class VideoDetails {
 	private String title;
 	private String overview;
 	private String imgpath;
+	private String videoname;
 	private String popularity;
 	private String language;
 	
