@@ -64,7 +64,6 @@ public class VideoController {
 	public @ResponseBody byte[] getMoviePoster(@RequestParam String  name) throws IOException {
 		log.info("New Request to get movie poster from Path: " + name);
 		return videoDataService.getMoviePoster(name);
-
 	}
 
 	@GetMapping(path = "/movie/video", produces = "video/mp4")

@@ -24,12 +24,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import com.hilan.vistr.model.FileContentDetails;
 import com.hilan.vistr.model.OriginDbMovieDetails;
 import com.hilan.vistr.model.VideoDetails;
 
@@ -43,7 +47,7 @@ public class VideoDataService {
 	private String instanceId;
 
 	private List<String> list = new LinkedList<>();
-	private static final Integer REPLICASERVER_SIZE = 3;
+	private static final Integer REPLICASERVER_SIZE = 2;
 
 	@Value("${origindb.filename}")
 	private String origindb;
@@ -59,6 +63,7 @@ public class VideoDataService {
 	private static final String VID_RESOURCE_DIR = "J:\\originserverdb\\";
 	private String REPLICA_SERVER_1_DIR = "J:\\replicaserver1db\\";
 	private String REPLICA_SERVER_2_DIR = "J:\\replicaserver2db\\";
+	private String ORIGIN_SERVER = "http://localhost:8090/push/replica";
 
 	public void createReplicaDBFile() {
 		XSSFWorkbook workbook = new XSSFWorkbook();
@@ -186,7 +191,6 @@ public class VideoDataService {
 	}
 
 	public InputStreamResource getMovieVideo(String vid) throws Exception {
-		System.out.println(instanceId);
 		String dirPath;
 		switch (instanceId) {
 		case "1":
@@ -205,13 +209,11 @@ public class VideoDataService {
 			log.info("Video Exists in Replica Server");
 			File f1 = new File(p.toString());
 			FileInputStream in = new FileInputStream(f1);
-			// return IOUtils.toByteArray(in);
 			InputStreamResource resource = new InputStreamResource(in);
 			return resource;
 		} else {
 			log.info("Video Unavailable in Replica Server");
 			p = Paths.get(VID_RESOURCE_DIR + vid);
-			System.out.println(p.toString());
 
 			if (Files.exists(p)) {
 				log.info("Video Exists in Origin Server");
@@ -219,11 +221,20 @@ public class VideoDataService {
 					list.remove(0);
 				list.add(vid);
 				// API call
-				log.info("Video Added to Replica Server. ");
+				RestTemplate restTemplate = new RestTemplate();
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				FileContentDetails body = new FileContentDetails();
+				body.setReplicaServerPath(dirPath);
+				body.setOriginFileName(vid);
+				HttpEntity<FileContentDetails> request = new HttpEntity<FileContentDetails>(body, headers);
+				ResponseEntity<String> response = restTemplate.postForEntity(ORIGIN_SERVER, request,
+						String.class);
+				log.info("Response: " + response);
+				log.info("Video Pushed to Replica Server by Origin Server");
 				log.info(list.size() + "");
-				return null;
+				return this.getMovieVideo(vid);
 			}
-
 			else {
 				log.info("Invalid video path");
 				throw new Exception("Invalid video path");
